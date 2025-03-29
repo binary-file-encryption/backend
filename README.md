@@ -23,10 +23,10 @@
 
 ### 🔸Git Working Process
 1. issue를 등록한다.
-2. 깃 컨벤션에 맞게 Branch를 생성한다.
+2. 깃 컨벤션에 맞게 Branch를 생성한다. branch는 dev 브렌치에서 시작한다.
 3. Add - Commit - Push - Pull Request 의 과정을 거친다.
 4. 작업이 완료되었다면, Remote Repository(Github)에 해당 브랜치를 올린다.
-5. Github에서 PR을 생성하고, Merge를 진행한다. Merge는 deploy 브렌치로 진행한다.
+5. Github에서 PR을 생성하고, Merge를 진행한다. Merge는 dev 브렌치로 진행한다.
 6. merge된 Branch는 삭제한다.
 
 🌴 브랜치
