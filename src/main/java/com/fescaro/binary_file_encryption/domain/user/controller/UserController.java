@@ -1,6 +1,7 @@
 package com.fescaro.binary_file_encryption.domain.user.controller;
 
 import com.fescaro.binary_file_encryption.domain.user.dto.UserJoinReq;
+import com.fescaro.binary_file_encryption.domain.user.dto.UserLoinReq;
 import com.fescaro.binary_file_encryption.domain.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,5 +20,10 @@ public class UserController {
     @PostMapping("/join")
     public ResponseEntity<?> join(@Valid @RequestBody UserJoinReq userJoinReq) {
         return userService.join(userJoinReq);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@Valid @RequestBody UserLoinReq userLoinReq) {
+        return userService.login(userLoinReq);
     }
 }

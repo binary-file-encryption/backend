@@ -1,7 +1,9 @@
 package com.fescaro.binary_file_encryption.domain.user.service;
 
 import com.fescaro.binary_file_encryption.domain.user.dto.UserJoinReq;
+import com.fescaro.binary_file_encryption.domain.user.dto.UserLoinReq;
 import com.fescaro.binary_file_encryption.domain.user.entity.User;
+import com.fescaro.binary_file_encryption.domain.user.exception.UserPasswordNotCorrectException;
 import com.fescaro.binary_file_encryption.domain.user.repository.UserRepository;
 import com.fescaro.binary_file_encryption.global.enums.statuscode.ErrorStatus;
 import com.fescaro.binary_file_encryption.global.jwt.util.JwtUtil;
@@ -20,6 +22,9 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
+    /**
+     * 회원 가입
+     */
     @Override
     public ResponseEntity<?> join(UserJoinReq userJoinReq) {
         // 동일 username 사용자 생성 방지
@@ -30,6 +35,20 @@ public class UserServiceImpl implements UserService {
         String encodedPassword = passwordEncoder.encode(userJoinReq.password());
         User user = UserJoinReq.of(userJoinReq.username(), encodedPassword);
         userRepository.save(user);
+        return getJwtResponseEntity(user);
+    }
+
+    /**
+     * 로그인
+     */
+    @Override
+    public ResponseEntity<?> login(UserLoinReq userLoinReq) {
+        // 회원 엔티티 조회
+        User user = userRepository.getByUsername(userLoinReq.username());
+        // 비밀 번호 검증
+        if(!passwordEncoder.matches(userLoinReq.password(), user.getPassword())) {
+            throw new UserPasswordNotCorrectException();
+        }
         return getJwtResponseEntity(user);
     }
 
