@@ -27,11 +27,11 @@ public class JwtUtil {
         this.tokenExpTime = tokenExpTime;
     }
 
-    public String getEmailFromJWT(String token) {
+    public String getUsernameFromJwt(String token) {
         if (token != null && token.startsWith("Bearer ")) {
             String jwt = token.substring(7);
             if (!isExpired(jwt)) {
-                return getEmail(jwt);
+                return getUsername(jwt);
             } else {
                 throw new RuntimeException("토큰이 만료되었습니다.");
             }
@@ -49,8 +49,8 @@ public class JwtUtil {
                 .getPayload();
     }
 
-    public String getEmail(String token) {
-        return getAllClaims(token).get("e   mail", String.class);
+    public String getUsername(String token) {
+        return getAllClaims(token).get("username", String.class);
     }
 
     public String getRole(String token) {
