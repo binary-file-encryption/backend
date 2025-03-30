@@ -1,4 +1,4 @@
-package com.fescaro.binary_file_encryption.global.s3.config;
+package com.fescaro.binary_file_encryption.global.storage.s3.config;
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;

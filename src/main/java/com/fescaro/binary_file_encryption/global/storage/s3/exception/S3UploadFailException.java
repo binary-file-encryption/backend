@@ -1,4 +1,4 @@
-package com.fescaro.binary_file_encryption.global.s3.exception;
+package com.fescaro.binary_file_encryption.global.storage.s3.exception;
 
 import com.fescaro.binary_file_encryption.global.enums.statuscode.BaseCode;
 import com.fescaro.binary_file_encryption.global.enums.statuscode.ErrorStatus;

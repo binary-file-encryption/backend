@@ -1,4 +1,4 @@
-package com.fescaro.binary_file_encryption.global.s3.service;
+package com.fescaro.binary_file_encryption.global.storage.s3.service;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.SdkClientException;
@@ -6,11 +6,12 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.fescaro.binary_file_encryption.global.enums.statuscode.ErrorStatus;
 import com.fescaro.binary_file_encryption.global.exception.GeneralException;
-import com.fescaro.binary_file_encryption.global.s3.exception.S3ClientErrorException;
-import com.fescaro.binary_file_encryption.global.s3.exception.S3FileNotFoundException;
-import com.fescaro.binary_file_encryption.global.s3.exception.S3FileProcessingErrorException;
-import com.fescaro.binary_file_encryption.global.s3.exception.S3RemoveFailException;
-import com.fescaro.binary_file_encryption.global.s3.exception.S3UploadFailException;
+import com.fescaro.binary_file_encryption.global.storage.s3.exception.S3ClientErrorException;
+import com.fescaro.binary_file_encryption.global.storage.s3.exception.S3FileNotFoundException;
+import com.fescaro.binary_file_encryption.global.storage.s3.exception.S3FileProcessingErrorException;
+import com.fescaro.binary_file_encryption.global.storage.s3.exception.S3RemoveFailException;
+import com.fescaro.binary_file_encryption.global.storage.s3.exception.S3UploadFailException;
+import com.fescaro.binary_file_encryption.global.storage.service.FileStorageService;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -22,7 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
-public class S3Service {
+public class S3Service implements FileStorageService {
 
     private final AmazonS3Client s3Client;
 
@@ -32,7 +33,8 @@ public class S3Service {
     /**
      * 파일 업로드
      */
-    public String uploadFile(MultipartFile file) throws IOException {
+    @Override
+    public void uploadFile(MultipartFile file) throws IOException {
         String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(file.getSize());
@@ -51,10 +53,6 @@ public class S3Service {
             // 파일 입출력 관련 오류 처리
             throw new S3FileProcessingErrorException();
         }
-
-        // S3에 업로드된 파일 URL 반환
-        URL fileUrl = s3Client.getUrl(bucket, fileName);
-        return fileUrl.toString();
     }
 
     // S3주소로 파일 삭제
@@ -66,6 +64,7 @@ public class S3Service {
     }
 
     // 파일 삭제
+    @Override
     public void deleteFile(String fileName) {
         try {
             s3Client.deleteObject(bucket, fileName);
@@ -77,6 +76,7 @@ public class S3Service {
     }
 
     // 파일 다운로드 메서드 - 파일이 존재하는지 확인한 후, 다운로드 가능한 바이트 배열 반환
+    @Override
     public byte[] downloadFile(String fileName) throws IOException {
         if (!s3Client.doesObjectExist(bucket, fileName)) {
             throw new S3FileNotFoundException(); // 파일이 존재하지 않는 경우
