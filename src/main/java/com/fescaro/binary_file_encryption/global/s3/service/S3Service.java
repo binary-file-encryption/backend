@@ -7,6 +7,7 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.fescaro.binary_file_encryption.global.enums.statuscode.ErrorStatus;
 import com.fescaro.binary_file_encryption.global.exception.GeneralException;
 import com.fescaro.binary_file_encryption.global.s3.exception.S3ClientErrorException;
+import com.fescaro.binary_file_encryption.global.s3.exception.S3FileNotFoundException;
 import com.fescaro.binary_file_encryption.global.s3.exception.S3FileProcessingErrorException;
 import com.fescaro.binary_file_encryption.global.s3.exception.S3RemoveFailException;
 import com.fescaro.binary_file_encryption.global.s3.exception.S3UploadFailException;
@@ -64,7 +65,6 @@ public class S3Service {
         }
     }
 
-
     // 파일 삭제
     public void deleteFile(String fileName) {
         try {
@@ -76,24 +76,28 @@ public class S3Service {
         }
     }
 
-
-    // 파일 다운로드 메서드 - 직접 다운로드 -> 이미지를 파일로 다운할 수 있는 다운로드 링크를 제공
+    // 파일 다운로드 메서드 - 파일이 존재하는지 확인한 후, 다운로드 가능한 바이트 배열 반환
     public byte[] downloadFile(String fileName) throws IOException {
+        if (!s3Client.doesObjectExist(bucket, fileName)) {
+            throw new S3FileNotFoundException(); // 파일이 존재하지 않는 경우
+        }
         return s3Client.getObject(bucket, fileName).getObjectContent().readAllBytes();
     }
 
-    // 파일 URL 반환 메서드 - 프론트에서 랜더링 -> 프론트엔드에서 이미지를 렌더링 할 수 있도록, S3 링크를 제공
+    // 파일 URL 반환 메서드 - 파일이 존재하는지 확인한 후, S3 링크를 반환
     public String getFileUrl(String fileName) {
+        if (!s3Client.doesObjectExist(bucket, fileName)) {
+            throw new S3FileNotFoundException(); // 파일이 존재하지 않는 경우
+        }
         return s3Client.getUrl(bucket, fileName).toString();
     }
-
 
     // URL에서 파일명 추출
     private String extractFileNameFromUrl(String url) {
         try {
             // URL에서 파일명 부분만 추출 후, +를 공백으로 되돌리기
-            String decodedUrl = java.net.URLDecoder.decode(url, "UTF-8");  // URL 디코딩
-            return decodedUrl.substring(decodedUrl.lastIndexOf("/") + 1);  // 파일명 추출
+            String decodedUrl = java.net.URLDecoder.decode(url, "UTF-8");
+            return decodedUrl.substring(decodedUrl.lastIndexOf("/") + 1);
         } catch (Exception e) {
             throw new GeneralException(ErrorStatus._INTERNAL_SERVER_ERROR);
         }
