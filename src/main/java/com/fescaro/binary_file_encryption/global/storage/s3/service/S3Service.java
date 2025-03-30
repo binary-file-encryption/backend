@@ -34,7 +34,7 @@ public class S3Service implements FileStorageService {
      * 파일 업로드
      */
     @Override
-    public void uploadFile(MultipartFile file) throws IOException {
+    public String uploadFile(MultipartFile file) throws IOException {
         String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(file.getSize());
@@ -53,6 +53,7 @@ public class S3Service implements FileStorageService {
             // 파일 입출력 관련 오류 처리
             throw new S3FileProcessingErrorException();
         }
+        return fileName; // 저장된 파일 이름 반환
     }
 
     // S3주소로 파일 삭제

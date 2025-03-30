@@ -7,7 +7,10 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import java.security.Principal;
 import lombok.*;
 
 @Entity
@@ -17,7 +20,8 @@ import lombok.*;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "encrypted_file_info")
 public class EncryptedFileInfo extends BaseEntity {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "encrypted_file_id")
     private Long id;
     @Column(name = "file_name", nullable = false)
@@ -26,4 +30,8 @@ public class EncryptedFileInfo extends BaseEntity {
     private String savedFileName;
     @Column(name = "iv_value", nullable = false)
     private String ivValue;
+
+    @OneToOne
+    @JoinColumn(name = "original_file_id", nullable = false)
+    private OriginalFileInfo originalFileInfo;
 }
