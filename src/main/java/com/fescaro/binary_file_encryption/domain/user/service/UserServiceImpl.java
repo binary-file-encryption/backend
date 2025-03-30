@@ -27,14 +27,9 @@ public class UserServiceImpl implements UserService {
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
                     .body(ApiResponse.onFailure(ErrorStatus._USER_IS_EXISTS, "회원가입에 실패하였습니다."));
         }
-
-        User user = User.builder()
-                .username(userJoinReq.username())
-                .password(passwordEncoder.encode(userJoinReq.password()))
-                .role("ROLE_USER")
-                .build();
+        String encodedPassword = passwordEncoder.encode(userJoinReq.password());
+        User user = UserJoinReq.of(userJoinReq.username(), encodedPassword);
         userRepository.save(user);
-
         return getJwtResponseEntity(user);
     }
 
