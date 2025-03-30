@@ -1,4 +1,4 @@
-package com.fescaro.binary_file_encryption.domain.member.entity;
+package com.fescaro.binary_file_encryption.domain.user.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

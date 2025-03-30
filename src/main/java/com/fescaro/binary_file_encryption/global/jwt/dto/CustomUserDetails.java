@@ -1,6 +1,6 @@
 package com.fescaro.binary_file_encryption.global.jwt.dto;
 
-import com.fescaro.binary_file_encryption.domain.member.entity.User;
+import com.fescaro.binary_file_encryption.domain.user.entity.User;
 import java.util.ArrayList;
 import java.util.Collection;
 import org.springframework.security.core.GrantedAuthority;
