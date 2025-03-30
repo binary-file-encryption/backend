@@ -13,7 +13,7 @@ public enum ErrorStatus implements BaseCode {
 
 	// User Error
 	_USER_NOT_FOUND(HttpStatus.NOT_FOUND, "USER4001", "해당하는 사용자를 찾을 수 없습니다."),
-	PASSWORD_NOT_CORRECT(HttpStatus.FORBIDDEN, "USER4002", "비밀번호가 일치하지 않습니다."),
+	_USER_PASSWORD_NOT_CORRECT(HttpStatus.FORBIDDEN, "USER4002", "비밀번호가 일치하지 않습니다."),
 	_USER_IS_EXISTS(HttpStatus.FORBIDDEN, "USER4003", "해당하는 사용자가 이미 존재합니다."),
 
 	// S3 Error
