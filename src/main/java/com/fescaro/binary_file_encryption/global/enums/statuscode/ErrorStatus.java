@@ -21,10 +21,10 @@ public enum ErrorStatus implements BaseCode {
 	_S3_CLIENT_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "S35002", "S3 클라이언트 오류가 발생했습니다."),
 	_S3_FILE_PROCESSING_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "S35003", "파일 처리 중 오류가 발생했습니다."),
 	_S3_REMOVE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "S35004", "S3 파일 삭제 중 오류가 발생하였습니다."),
-	_S3_FILE_NOT_FOUND(HttpStatus.INTERNAL_SERVER_ERROR, "S350045", "S3 버킷에 해당하는 파일이 존재하지 않습니다."),
+	_S3_FILE_NOT_FOUND(HttpStatus.INTERNAL_SERVER_ERROR, "S35005", "S3 버킷에 해당하는 파일이 존재하지 않습니다."),
 
 	// Encrypt Error
-	_ENCRYPT_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "S350045", "S3 버킷에 해당하는 파일이 존재하지 않습니다."),
+	_ENCRYPT_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "ENCRYPT5001", "파일이 암호화에 실패하였습니다."),
 
 	// 로그인 실패 사유
 	_INVALID_CREDENTIALS(HttpStatus.UNAUTHORIZED, "AUTH4001", "아이디 또는 비밀번호가 잘못되었습니다."),

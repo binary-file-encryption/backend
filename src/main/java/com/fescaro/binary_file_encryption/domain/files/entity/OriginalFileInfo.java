@@ -42,14 +42,18 @@ public class OriginalFileInfo extends BaseEntity {
     private EncryptedFileInfo encryptedFileInfo;
 
     // == 편의 메소드 == //
-    public static OriginalFileInfo toEntity(User user, String fileName, String savedFileName,
-                                            EncryptedFileInfo encryptedFileInfo) {
+    public static OriginalFileInfo toEntity(User user, String fileName, String savedFileName) {
         return OriginalFileInfo.builder()
                 .fileName(fileName)
                 .savedFileName(savedFileName)
                 .user(user)
-                .encryptedFileInfo(encryptedFileInfo)
                 .build();
+    }
+
+    // 연관 관계 매핑
+    public void setMapping(EncryptedFileInfo encryptedFileInfo) {
+        this.encryptedFileInfo = encryptedFileInfo;
+        encryptedFileInfo.setOriginalFileInfo(this);
     }
 
 }

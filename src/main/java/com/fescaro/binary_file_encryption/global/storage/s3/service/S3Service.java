@@ -21,6 +21,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+/**
+ * 참고 문서
+ * https://techblog.woowahan.com/11392/
+ * https://docs.aws.amazon.com/ko_kr/sdk-for-java/v1/developer-guide/examples-s3-objects.html
+ */
 @Service
 @RequiredArgsConstructor
 public class S3Service implements FileStorageService {

@@ -33,10 +33,11 @@ public class FileServiceImpl implements FilesService {
     private final AESEncryptionUtil aesEncryptionUtil;
 
     @Transactional
+    @Override
     public FileResponseDto uploadAndEncrypt(String username, MultipartFile file) throws Exception {
         // 1. 현재 회원 정보 조회
         User user = userRepository.getByUsername(username);
-        // 2. 원본 파일 저장
+        // 2. 원본 파일 저장소에 저장
         String savedOriginalFileName = fileStorageService.uploadFile(file);
         // 3. 파일 암호화 및 저장소 저장
         File tempEncryptedFile = File.createTempFile("encrypted_", "_" + file.getOriginalFilename());
@@ -59,19 +60,28 @@ public class FileServiceImpl implements FilesService {
                     encryptedOriginalFileName
             );
         }
-        // 5. 암호화된 파일 엔티티 생성 및 저장
-        EncryptedFileInfo encryptedFileInfoEntity
-                = EncryptedFileInfo.toEntity(encryptedOriginalFileName, savedEncryptedFileName, encryptionIV);
-        encryptedFileInfoRepository.save(encryptedFileInfoEntity);
-        // 원본 파일 엔티티 생성 및 저장(+ 연관 관계 매핑)
-        OriginalFileInfo originalFileInfoEntity
-                = OriginalFileInfo.toEntity(user, file.getOriginalFilename(), savedOriginalFileName, encryptedFileInfoEntity);
+        // 5. 원본 파일 엔티티 생성 및 저장
+        OriginalFileInfo originalFileInfoEntity = OriginalFileInfo.toEntity(
+                user,
+                file.getOriginalFilename(),
+                savedOriginalFileName);
         originalFileInfoRepository.save(originalFileInfoEntity);
 
-        // 6. 임시 암호화 파일 삭제
+        // 6. 암호화된 파일 엔티티 생성 및 연관관계 설정
+        EncryptedFileInfo encryptedFileInfoEntity = EncryptedFileInfo.toEntity(
+                encryptedOriginalFileName,
+                savedEncryptedFileName,
+                encryptionIV
+        );
+        // 연관 관계 매핑
+        originalFileInfoEntity.setMapping(encryptedFileInfoEntity);
+        encryptedFileInfoRepository.save(encryptedFileInfoEntity);
+        originalFileInfoRepository.save(originalFileInfoEntity);
+
+        // 7. 임시 암호화 파일 삭제
         tempEncryptedFile.delete();
 
-        // 7. 반환 DTO 작성 및 반환
+        // 8. 반환 DTO 작성 및 반환
         FileResponseDto fileResponseDto = FileResponseDto.of(originalFileInfoEntity, encryptedFileInfoEntity);
         return fileResponseDto;
     }

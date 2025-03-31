@@ -44,4 +44,8 @@ public class EncryptedFileInfo extends BaseEntity {
                 .ivValue(ivValue)
                 .build();
     }
+
+    public void setOriginalFileInfo(OriginalFileInfo originalFileInfo) {
+        this.originalFileInfo = originalFileInfo;
+    }
 }
