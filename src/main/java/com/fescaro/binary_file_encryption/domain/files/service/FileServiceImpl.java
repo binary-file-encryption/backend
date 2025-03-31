@@ -17,7 +17,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -85,4 +92,33 @@ public class FileServiceImpl implements FilesService {
         FileResponseDto fileResponseDto = FileResponseDto.of(originalFileInfoEntity, encryptedFileInfoEntity);
         return fileResponseDto;
     }
+
+    /**
+     * 사용자가 업로드한 파일 조회(페이지네이션)
+     * @param username
+     * @param page
+     * @param size
+     * @return
+     */
+    @Override
+    public List<FileResponseDto> getMyFiles(String username, int page, int size) {
+        // 1. 사용자 정보 조회
+        User user = userRepository.getByUsername(username);
+        // 2. 사용자가 업로드한 파일 정보 조회(페이지네이션)
+        // 정렬 기준 설정
+        PageRequest pageRequest = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(
+                pageRequest.getPageNumber(),
+                pageRequest.getPageSize(),
+                Sort.by(Direction.DESC, "createdAt")); // 생성 시각을 기준으로 정렬
+
+        Page<OriginalFileInfo> myFiles = originalFileInfoRepository.getMyFiles(user, pageable);
+        // 3. 반환 DTO 작성 및 반환
+        ArrayList<FileResponseDto> responseDtoArrayList = new ArrayList<>();
+        for (OriginalFileInfo originalFileInfo : myFiles.getContent()) {
+            responseDtoArrayList.add(FileResponseDto.of(originalFileInfo, originalFileInfo.getEncryptedFileInfo()));
+        }
+        return responseDtoArrayList;
+    }
+
 }

@@ -5,19 +5,19 @@ import com.fescaro.binary_file_encryption.domain.files.entity.OriginalFileInfo;
 import java.time.LocalDateTime;
 
 public record FileResponseDto(
-        Long originalFileId,
         String originalFileName,
-        Long encryptedFileId,
+        String savedOriginalFileName,
         String encryptedFileName,
+        String savedEncryptedFileName,
         String ivValue,
         LocalDateTime updatedAt
 ) {
     public static FileResponseDto of(OriginalFileInfo originalFileInfo, EncryptedFileInfo encryptedFileInfo) {
         return new FileResponseDto(
-                originalFileInfo.getId(),
                 originalFileInfo.getFileName(),
-                encryptedFileInfo.getId(),
+                originalFileInfo.getSavedFileName(),
                 encryptedFileInfo.getFileName(),
+                encryptedFileInfo.getSavedFileName(),
                 encryptedFileInfo.getIvValue(),
                 encryptedFileInfo.getUpdatedAt());
     }
