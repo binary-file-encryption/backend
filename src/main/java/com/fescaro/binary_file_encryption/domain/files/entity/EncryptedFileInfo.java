@@ -34,4 +34,14 @@ public class EncryptedFileInfo extends BaseEntity {
     @OneToOne
     @JoinColumn(name = "original_file_id", nullable = false)
     private OriginalFileInfo originalFileInfo;
+
+
+    // == 편의 메소드 == //
+    public static EncryptedFileInfo toEntity(String fileName, String savedFileName, String ivValue) {
+        return EncryptedFileInfo.builder()
+                .fileName(fileName)
+                .savedFileName(savedFileName)
+                .ivValue(ivValue)
+                .build();
+    }
 }

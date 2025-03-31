@@ -38,8 +38,18 @@ public class OriginalFileInfo extends BaseEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-
     @OneToOne(mappedBy = "originalFileInfo", cascade = CascadeType.ALL)
     private EncryptedFileInfo encryptedFileInfo;
+
+    // == 편의 메소드 == //
+    public static OriginalFileInfo toEntity(User user, String fileName, String savedFileName,
+                                            EncryptedFileInfo encryptedFileInfo) {
+        return OriginalFileInfo.builder()
+                .fileName(fileName)
+                .savedFileName(savedFileName)
+                .user(user)
+                .encryptedFileInfo(encryptedFileInfo)
+                .build();
+    }
 
 }
