@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
@@ -84,5 +85,22 @@ public class FileServiceImpl implements FilesService {
         // 8. 반환 DTO 작성 및 반환
         FileResponseDto fileResponseDto = FileResponseDto.of(originalFileInfoEntity, encryptedFileInfoEntity);
         return fileResponseDto;
+    }
+
+    /**
+     * 사용자가 업로드한 파일 조회(페이지네이션)
+     * @param username
+     * @param page
+     * @param size
+     * @return
+     */
+    @Override
+    public List<FileResponseDto> getMyFiles(String username, int page, int size) {
+        // 1. 사용자 정보 조회
+
+        // 2. 사용자가 업로드한 파일 정보 조회(페이지네이션)
+
+        // 3. 반환 DTO 작성 및 반환
+        return null;
     }
 }
