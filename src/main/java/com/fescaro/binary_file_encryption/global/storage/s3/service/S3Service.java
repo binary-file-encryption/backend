@@ -35,7 +35,7 @@ public class S3Service implements FileStorageService {
      */
     @Override
     public String uploadFile(MultipartFile file) throws IOException {
-        String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+        String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(file.getSize());
         metadata.setContentType(file.getContentType());
@@ -52,6 +52,25 @@ public class S3Service implements FileStorageService {
         } catch (IOException e) {
             // 파일 입출력 관련 오류 처리
             throw new S3FileProcessingErrorException();
+        }
+        return fileName; // 저장된 파일 이름 반환
+    }
+
+    @Override
+    public String uploadFileByStream(InputStream inputStream, long contentLength, String contentType,
+                                     String originalFileName) {
+        String fileName = UUID.randomUUID() + "_" + originalFileName;
+        ObjectMetadata metadata = new ObjectMetadata();
+        metadata.setContentLength(contentLength);
+        metadata.setContentType(contentType);
+
+        // stream 기반 s3 파일 업로드 시도
+        try {
+            s3Client.putObject(bucket, fileName, inputStream, metadata);
+        } catch (AmazonServiceException e) {
+            throw new S3UploadFailException();
+        } catch (SdkClientException e) {
+            throw new S3ClientErrorException();
         }
         return fileName; // 저장된 파일 이름 반환
     }

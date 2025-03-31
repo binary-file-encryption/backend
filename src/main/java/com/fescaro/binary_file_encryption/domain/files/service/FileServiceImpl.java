@@ -11,6 +11,7 @@ import com.fescaro.binary_file_encryption.domain.user.repository.UserRepository;
 import com.fescaro.binary_file_encryption.global.encryption.aes.util.AESEncryptionUtil;
 import com.fescaro.binary_file_encryption.global.storage.service.FileStorageService;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -48,15 +49,16 @@ public class FileServiceImpl implements FilesService {
         }
         // 4. 암호화된 파일 저장소 저장
         String encryptedOriginalFileName = "encrypted_" + file.getOriginalFilename();
-        byte[] encryptedFileBytes = Files.readAllBytes(tempEncryptedFile.toPath());
-        MultipartFile encryptedMultipartFile = new MockMultipartFile(
-                "file",
-                encryptedOriginalFileName,
-                file.getContentType(),
-                encryptedFileBytes
-        );
-        String savedEncryptedFileName = fileStorageService.uploadFile(encryptedMultipartFile);
-
+        String savedEncryptedFileName;
+        // stream 기반 저장소 파일 업로드
+        try (InputStream encryptedFileInputStream = new FileInputStream(tempEncryptedFile)) {
+            savedEncryptedFileName = fileStorageService.uploadFileByStream(
+                    encryptedFileInputStream,
+                    tempEncryptedFile.length(),
+                    file.getContentType(),
+                    encryptedOriginalFileName
+            );
+        }
         // 5. 암호화된 파일 엔티티 생성 및 저장
         EncryptedFileInfo encryptedFileInfoEntity
                 = EncryptedFileInfo.toEntity(encryptedOriginalFileName, savedEncryptedFileName, encryptionIV);
