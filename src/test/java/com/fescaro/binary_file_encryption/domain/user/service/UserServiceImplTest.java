@@ -23,16 +23,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceImplTest {
-
     @Mock
     private JwtUtil jwtUtil;
-
     @Mock
     private UserRepository userRepository;
-
     @Mock
     private BCryptPasswordEncoder passwordEncoder;
-
     @InjectMocks
     private UserServiceImpl userService;
 
