@@ -49,10 +49,7 @@ public class ExceptionAdvice {
     public ResponseEntity<ApiResponse<?>> handleException(Exception exception) {
         ApiResponse<Object> response = ApiResponse.onFailure(
                 ErrorStatus._INTERNAL_SERVER_ERROR.getCode(),
-                "오류가 발생하였습니다. " +
-                        "1. 토큰을 삽입했는지 확인 해주세요. " +
-                        "2. 토큰의 유효기간을 확인 해주세요.(새로 발급하여 시도해보세요.)" +
-                        "문제가 해결되지 않는다면, 관리자에게 문의 해주세요.",
+                "알수없는 서버 오류가 발생하였습니다.",
                 exception.getMessage());
         log.error("Unhandled exception: {}", exception.getMessage(), exception);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);

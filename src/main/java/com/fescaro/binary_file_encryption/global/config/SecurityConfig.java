@@ -5,6 +5,7 @@ import com.fescaro.binary_file_encryption.global.jwt.handler.CustomAccessDeniedH
 import com.fescaro.binary_file_encryption.global.jwt.handler.CustomAuthenticationEntryPoint;
 import com.fescaro.binary_file_encryption.global.jwt.service.CustomUserDetailsService;
 import com.fescaro.binary_file_encryption.global.jwt.util.JwtUtil;
+import java.util.Arrays;
 import java.util.Collections;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -43,10 +44,13 @@ public class SecurityConfig {
                 )
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
-                // 임시로 모든 경로 허용
+
                 .cors(corsCustomizer -> corsCustomizer.configurationSource(request -> {
                     CorsConfiguration configuration = new CorsConfiguration();
-                    configuration.setAllowedOriginPatterns(Collections.singletonList("*"));
+                    configuration.setAllowedOriginPatterns(Arrays.asList(
+                            "https://binary-file-encryption.vercel.app",
+                            "https://binary-file-encryption.vercel.app/**"
+                    ));
                     configuration.setAllowedMethods(Collections.singletonList("*"));
                     configuration.setAllowCredentials(true);
                     configuration.setAllowedHeaders(Collections.singletonList("*"));
