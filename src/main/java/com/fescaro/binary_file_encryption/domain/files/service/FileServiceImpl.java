@@ -44,21 +44,34 @@ public class FileServiceImpl implements FilesService {
     public FileResponseDto uploadAndEncrypt(String username, MultipartFile file) throws Exception {
         // 1. 현재 회원 정보 조회
         User user = userRepository.getByUsername(username);
-        // 2. 원본 파일 저장소에 저장
-        String savedOriginalFileName = fileStorageService.uploadFile(file);
-        // 3. 파일 암호화 및 저장소 저장
+
+        // 2. 파일 암호화 수행
+        // 임시 파일 생성(암호화 결과물 저장용)
         File tempEncryptedFile = File.createTempFile("encrypted_", "_" + file.getOriginalFilename());
         String encryptionIV;
         try (InputStream in = file.getInputStream();
-            OutputStream out = new FileOutputStream(tempEncryptedFile)) {
-            encryptionIV = aesEncryptionUtil.encryptStream(in, out);
+             OutputStream out = new FileOutputStream(tempEncryptedFile)) {
+            encryptionIV = aesEncryptionUtil.encryptStream(in, out); // stream 기반 파일 암호화
         } catch (Exception e) {
             throw new EncryptFailException(); // 파일 암호화 실패 예외 처리
         }
-        // 4. 암호화된 파일 저장소 저장
+
+        // 3. 원본 파일 저장소에 저장
+        String savedOriginalFileName;
+        try (InputStream originalFileInputStream = file.getInputStream()) {
+            // stream 기반 파일 저장
+            savedOriginalFileName = fileStorageService.uploadFileByStream(
+                    originalFileInputStream,
+                    file.getSize(),
+                    file.getContentType(),
+                    file.getOriginalFilename()
+            );
+        }
+
+        // 4. 암호화된 파일 -> 저장소 저장
+        // stream 기반 저장소 파일 업로드
         String encryptedOriginalFileName = "encrypted_" + file.getOriginalFilename();
         String savedEncryptedFileName;
-        // stream 기반 저장소 파일 업로드
         try (InputStream encryptedFileInputStream = new FileInputStream(tempEncryptedFile)) {
             savedEncryptedFileName = fileStorageService.uploadFileByStream(
                     encryptedFileInputStream,
@@ -67,11 +80,13 @@ public class FileServiceImpl implements FilesService {
                     encryptedOriginalFileName
             );
         }
+
         // 5. 원본 파일 엔티티 생성 및 저장
         OriginalFileInfo originalFileInfoEntity = OriginalFileInfo.toEntity(
                 user,
                 file.getOriginalFilename(),
-                savedOriginalFileName);
+                savedOriginalFileName
+        );
         originalFileInfoRepository.save(originalFileInfoEntity);
 
         // 6. 암호화된 파일 엔티티 생성 및 연관관계 설정
