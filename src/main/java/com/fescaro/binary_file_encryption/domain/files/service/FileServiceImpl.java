@@ -9,6 +9,7 @@ import com.fescaro.binary_file_encryption.domain.files.repository.OriginalFileIn
 import com.fescaro.binary_file_encryption.domain.user.entity.User;
 import com.fescaro.binary_file_encryption.domain.user.repository.UserRepository;
 import com.fescaro.binary_file_encryption.global.encryption.aes.util.AESEncryptionUtil;
+import com.fescaro.binary_file_encryption.global.storage.s3.exception.S3UploadFailException;
 import com.fescaro.binary_file_encryption.global.storage.service.FileStorageService;
 import java.io.File;
 import java.io.FileInputStream;
@@ -79,6 +80,10 @@ public class FileServiceImpl implements FilesService {
                     file.getContentType(),
                     encryptedOriginalFileName
             );
+        } catch (Exception e) {
+            // 암호화된 파일 저장 실패 시 원본 파일도 삭제
+            fileStorageService.deleteFile(savedOriginalFileName);
+            throw new S3UploadFailException(); // 파일 업로드 실패 예외 발생
         }
 
         // 5. 원본 파일 엔티티 생성 및 저장
